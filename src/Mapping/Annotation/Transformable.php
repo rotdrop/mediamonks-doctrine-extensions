@@ -14,4 +14,9 @@ final class Transformable extends Annotation
      * @var string
      */
     public $name = 'noop';
+
+    /**
+     * @var bool
+     */
+    public $override = false;
 }

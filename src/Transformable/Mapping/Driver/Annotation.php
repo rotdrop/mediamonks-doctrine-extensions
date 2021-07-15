@@ -19,10 +19,10 @@ class Annotation extends AbstractAnnotationDriver
     {
         $class = $this->getMetaReflectionClass($meta);
         foreach ($class->getProperties() as $property) {
-            if ($this->isInherited($meta, $property)) {
-                continue;
-            }
             if ($transformable = $this->reader->getPropertyAnnotation($property, self::TRANSFORMABLE)) {
+                if ($this->isInherited($meta, $property) && !$transformable->override) {
+                    continue;
+                }
                 $config['transformable'][] = $this->getConfig($property, $transformable);
             }
         }

@@ -2,7 +2,7 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-abstract class AbstractHashTransformer implements TransformerInterface
+abstract class AbstractHashTransformer extends AbstractTransformer
 {
     /**
      * @var string

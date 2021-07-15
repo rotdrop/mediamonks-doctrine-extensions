@@ -8,7 +8,7 @@ use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
 use ParagonIE\HiddenString\HiddenString;
 
-class HaliteSymmetricTransformer implements TransformerInterface
+class HaliteSymmetricTransformer extends AbstractTransformer
 {
     const HALITE_LEGACY_VERSION = '1.0.0';
 
@@ -109,4 +109,3 @@ class HaliteSymmetricTransformer implements TransformerInterface
         return \Sodium\hex2bin($decryptedValue);
     }
 }
-

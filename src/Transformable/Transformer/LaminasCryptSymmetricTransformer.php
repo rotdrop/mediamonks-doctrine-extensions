@@ -4,7 +4,7 @@ namespace MediaMonks\Doctrine\Transformable\Transformer;
 
 use Laminas\Crypt\BlockCipher;
 
-class LaminasCryptSymmetricTransformer implements TransformerInterface
+class LaminasCryptSymmetricTransformer extends AbstractTransformer
 {
     /**
      * @var BlockCipher

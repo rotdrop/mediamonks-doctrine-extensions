@@ -15,4 +15,9 @@ interface TransformerInterface
      * @return mixed
      */
     public function reverseTransform($value);
+
+    /**
+     * @return bool
+     */
+    public function isCachable();
 }

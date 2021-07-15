@@ -5,7 +5,7 @@ namespace MediaMonks\Doctrine\Transformable\Transformer;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 
-class DefuseCryptoEncryptKeyTransformer implements TransformerInterface
+class DefuseCryptoEncryptKeyTransformer extends AbstractTransformer
 {
     /**
      * @var mixed
