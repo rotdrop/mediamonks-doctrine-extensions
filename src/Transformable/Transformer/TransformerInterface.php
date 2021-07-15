@@ -7,4 +7,6 @@ interface TransformerInterface
     public function transform(?string $value): mixed;
 
     public function reverseTransform(?string $value): mixed;
+
+    public function isCachable(): bool;
 }

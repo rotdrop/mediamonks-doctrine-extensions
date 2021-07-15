@@ -183,6 +183,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     protected function getNewValue(string $oid, string $field, TransformerInterface $transformer, TransformerMethod $method, mixed $value): mixed
     {
         if ($method === TransformerMethod::TRANSFORM
+            && $this->getTransformer($transformerName)->isCachable()
             && $this->getEntityFieldValue($oid, $field, TransformableState::PLAIN) === $value) {
             return $this->getEntityFieldValue($oid, $field, TransformableState::TRANSFORMED);
         }

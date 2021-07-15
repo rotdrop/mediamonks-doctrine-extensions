@@ -13,8 +13,9 @@ use Gedmo\Mapping\Annotation\Annotation as GedmoAnnotation;
 #[Attribute(Attribute::TARGET_PROPERTY)]
 final class Transformable implements GedmoAnnotation
 {
-    public function __construct(array $data = [], public string $name = 'noop')
+    public function __construct(array $data = [], public string $name = 'noop', public bool $override = false)
     {
         $this->name = $data['name'] ?? $name;
+        $this->override = $data['override'] ?? $override;
     }
 }
