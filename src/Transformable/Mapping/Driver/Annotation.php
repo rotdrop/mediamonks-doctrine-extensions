@@ -44,7 +44,8 @@ class Annotation extends AbstractAnnotationDriver
     {
         return [
             'field' => $property->getName(),
-            'name' => $transformable->name
+            'name' => $transformable->name,
+            'context' => $transformable->context,
         ];
     }
 }
