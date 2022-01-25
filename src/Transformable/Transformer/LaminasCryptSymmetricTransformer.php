@@ -31,7 +31,7 @@ class LaminasCryptSymmetricTransformer extends AbstractTransformer
         return $this->crypt->getBinaryOutput();
     }
 
-    public function transform(?string $value): string|bool
+    public function transform(?string $value, mixed &$context = null): string|bool
     {
         if (empty($value)) {
             return false;
@@ -40,7 +40,7 @@ class LaminasCryptSymmetricTransformer extends AbstractTransformer
         return $this->crypt->encrypt($value);
     }
 
-    public function reverseTransform(?string $value): bool|string|null
+    public function reverseTransform(?string $value, mixed &$context = null): bool|string|null
     {
         if ($value === null) {
             return null;

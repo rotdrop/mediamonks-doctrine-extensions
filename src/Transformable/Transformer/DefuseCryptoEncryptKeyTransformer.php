@@ -39,7 +39,7 @@ class DefuseCryptoEncryptKeyTransformer extends AbstractTransformer
      * @throws \Defuse\Crypto\Exception\BadFormatException
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      */
-    public function transform(?string $value): string
+    public function transform(?string $value, mixed &$context = null): string
     {
         if (empty($value)) {
             return false;
@@ -53,7 +53,7 @@ class DefuseCryptoEncryptKeyTransformer extends AbstractTransformer
      * @throws \Defuse\Crypto\Exception\EnvironmentIsBrokenException
      * @throws \Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException
      */
-    public function reverseTransform(?string $value): string|null
+    public function reverseTransform(?string $value, mixed &$context = null): string|null
     {
         if (empty($value)) {
             return null;

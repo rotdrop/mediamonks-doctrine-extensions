@@ -47,7 +47,7 @@ class HaliteSymmetricTransformer extends AbstractTransformer
      * @throws \ParagonIE\Halite\Alerts\InvalidType
      * @throws \SodiumException
      */
-    public function transform(?string $value): string|bool
+    public function transform(?string $value, mixed &$context = null): string|bool
     {
         if (empty($value)) {
             return false;
@@ -72,7 +72,7 @@ class HaliteSymmetricTransformer extends AbstractTransformer
      * @throws \ParagonIE\Halite\Alerts\InvalidType
      * @throws \SodiumException
      */
-    public function reverseTransform(?string $value): string|null
+    public function reverseTransform(?string $value, mixed &$context = null): string|null
     {
         if (empty($value)) {
             return null;

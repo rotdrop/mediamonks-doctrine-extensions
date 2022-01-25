@@ -120,6 +120,9 @@ class TransformableSubscriber extends MappedEventSubscriber
      */
     protected function handle(EntityManagerInterface|ObjectManager $objectManager, UnitOfWork $unitOfWork, object $entity, TransformerMethod $method): void
     {
+        /**
+         * @var \Doctrine\ORM\EntityManager $objectManager
+         */
         $meta = $objectManager->getClassMetadata(get_class($entity));
         $config = $this->getConfiguration($objectManager, $meta->name);
         $transformableConfig = $config[self::TRANSFORMABLE] ?? [];
@@ -141,11 +144,15 @@ class TransformableSubscriber extends MappedEventSubscriber
         $transformer = $this->getTransformer($column['name']);
         $oid = spl_object_id($entity);
 
+        $context = $this->getFieldContext($entity, $column, $meta);
+
         $reflectionProperty = $meta->getReflectionProperty($field);
         $originalValue = $this->getEntityValue($reflectionProperty, $entity);
 
-        $newValue = $this->getNewValue($oid, $field, $transformer, $method, $originalValue);
+        $newValue = $this->getNewValue($oid, $field, $transformer, $method, $originalValue, $context);
         $reflectionProperty->setValue($entity, $newValue);
+
+        $this->setFieldContext($context, $entity, $column, $meta);
 
         // replace the uow original data with the reverse transformed, to avoid detecting useless changes.
         $unitOfWork->setOriginalEntityProperty($oid, $field, $newValue);
@@ -166,6 +173,32 @@ class TransformableSubscriber extends MappedEventSubscriber
         }
     }
 
+    protected function getFieldContext(object $entity, array $column, ClassMetadata $meta): mixed
+    {
+        if (empty($column['context'])) {
+            return null;
+        }
+        $contextProperty = $meta->getReflectionClass()->getProperty($column['context']);
+        if (!$contextProperty) {
+            throw new \RuntimeException("There is no context-propery [{$column['context']}] to hold the transformation context of the propery [{$column['field']}] on object [{$meta->name}]");
+        }
+        $contextProperty->setAccessible(true);
+        return $contextProperty->getValue($entity);
+    }
+
+    protected function setFieldContext(mixed $context, object $entity, array $column, ClassMetadata $meta)
+    {
+        if (empty($column['context'])) {
+            return;
+        }
+        $contextProperty = $meta->getReflectionClass()->getProperty($column['context']);
+        if (!$contextProperty) {
+            throw new \RuntimeException("There is no context-propery [{$column['context']}] to hold the transformation context of the propery [{$column['field']}] on object [{$meta->name}]");
+        }
+        $contextProperty->setAccessible(true);
+        $contextProperty->setValue($entity, $context);
+    }
+
     protected function getEntityValue(ReflectionProperty $reflectionProperty, object $entity): string|null
     {
         $value = $reflectionProperty->getValue($entity);
@@ -180,27 +213,27 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * @throws Exception
      */
-    protected function getNewValue(string $oid, string $field, TransformerInterface $transformer, TransformerMethod $method, mixed $value): mixed
+    protected function getNewValue(string $oid, string $field, TransformerInterface $transformer, TransformerMethod $method, mixed $value, mixed &$context): mixed
     {
         if ($method === TransformerMethod::TRANSFORM
-            && $this->getTransformer($transformerName)->isCachable()
+            && $transformer->isCachable()
             && $this->getEntityFieldValue($oid, $field, TransformableState::PLAIN) === $value) {
             return $this->getEntityFieldValue($oid, $field, TransformableState::TRANSFORMED);
         }
 
-        return $this->performTransformerOperation($transformer, $method, $value);
+        return $this->performTransformerOperation($transformer, $method, $value, $context);
     }
 
     /**
      * @throws Exception
      */
-    protected function performTransformerOperation(TransformerInterface $transformer, TransformerMethod $method, mixed $originalValue): mixed
+    protected function performTransformerOperation(TransformerInterface $transformer, TransformerMethod $method, mixed $originalValue, mixed &$context): mixed
     {
         if ($originalValue === null) return null;
 
         return match ($method) {
-            TransformerMethod::TRANSFORM => $transformer->transform($originalValue),
-            TransformerMethod::REVERSE_TRANSFORM => $transformer->reverseTransform($originalValue)
+            TransformerMethod::TRANSFORM => $transformer->transform($originalValue, $context),
+            TransformerMethod::REVERSE_TRANSFORM => $transformer->reverseTransform($originalValue, $context)
         };
     }
 

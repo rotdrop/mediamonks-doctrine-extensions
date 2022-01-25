@@ -34,9 +34,9 @@ abstract class AbstractHashTransformer extends AbstractTransformer
         return $this->binary;
     }
 
-    public abstract function transform(?string $value): string|bool;
+    public abstract function transform(?string $value, mixed &$context = null): string|bool;
 
-    public function reverseTransform(?string $value): string|null
+    public function reverseTransform(?string $value, mixed &$context = null): string|null
     {
         return $value;
     }

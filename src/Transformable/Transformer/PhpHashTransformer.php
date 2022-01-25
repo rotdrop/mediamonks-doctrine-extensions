@@ -4,7 +4,7 @@ namespace MediaMonks\Doctrine\Transformable\Transformer;
 
 class PhpHashTransformer extends AbstractHashTransformer
 {
-    public function transform(?string $value): string|bool
+    public function transform(?string $value, mixed &$context = null): string|bool
     {
         if (empty($value)) {
             return false;
