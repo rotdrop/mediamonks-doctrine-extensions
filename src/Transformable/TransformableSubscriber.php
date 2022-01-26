@@ -178,12 +178,18 @@ class TransformableSubscriber extends MappedEventSubscriber
         if (empty($column['context'])) {
             return null;
         }
-        $contextProperty = $meta->getReflectionClass()->getProperty($column['context']);
+        $contextProperty = $column['context'];
+        $arrayContext = str_ends_with($contextProperty, '[]');
+        if ($arrayContext) {
+          $contextProperty = substr($contextProperty, 0, -2);
+        }
+        $contextProperty = $meta->getReflectionClass()->getProperty($contextProperty);
         if (!$contextProperty) {
             throw new \RuntimeException("There is no context-propery [{$column['context']}] to hold the transformation context of the propery [{$column['field']}] on object [{$meta->name}]");
         }
         $contextProperty->setAccessible(true);
-        return $contextProperty->getValue($entity);
+        $context = $contextProperty->getValue($entity);
+        return $arrayContext ? $context[$column['field']]??null : $context;
     }
 
     protected function setFieldContext(mixed $context, object $entity, array $column, ClassMetadata $meta)
@@ -191,11 +197,21 @@ class TransformableSubscriber extends MappedEventSubscriber
         if (empty($column['context'])) {
             return;
         }
-        $contextProperty = $meta->getReflectionClass()->getProperty($column['context']);
+        $contextProperty = $column['context'];
+        $arrayContext = str_ends_with($contextProperty, '[]');
+        if ($arrayContext) {
+          $contextProperty = substr($contextProperty, 0, -2);
+        }
+        $contextProperty = $meta->getReflectionClass()->getProperty($contextProperty);
         if (!$contextProperty) {
             throw new \RuntimeException("There is no context-propery [{$column['context']}] to hold the transformation context of the propery [{$column['field']}] on object [{$meta->name}]");
         }
         $contextProperty->setAccessible(true);
+        if ($arrayContext) {
+          $contextArray = $contextProperty->getValue($entity)??[];
+          $contextArray[$column['field']] = $context;
+          $context = $contextArray;
+        }
         $contextProperty->setValue($entity, $context);
     }
 
