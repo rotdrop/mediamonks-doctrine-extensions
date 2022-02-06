@@ -52,5 +52,11 @@
         "psr-4": {
             "MediaMonks\\Doctrine\\": "src"
         }
+    },
+    "extra": {
+        "branch-alias": {
+           "dev-feature/gedmo-dev": "0.1-dev",
+           "dev-feature/transform-context-field": "0.1-dev"
+        }
     }
 }
