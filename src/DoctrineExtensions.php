@@ -17,6 +17,6 @@ final class DoctrineExtensions
      */
     public static function registerAnnotations():void
     {
-        AnnotationRegistry::registerFile(__DIR__.'/Mapping/Transformable.php');
+        // AnnotationRegistry::registerFile(__DIR__.'/Mapping/Transformable.php');
     }
 }
