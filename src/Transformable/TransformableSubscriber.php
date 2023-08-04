@@ -5,7 +5,7 @@ namespace MediaMonks\Doctrine\Transformable;
 use Doctrine\Common\EventArgs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\Event\PostLoadEventArgs;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
@@ -56,7 +56,7 @@ class TransformableSubscriber extends MappedEventSubscriber
     /**
      * @throws Exception
      */
-    public function postLoad(PostLoadEventArgs $eventArguments): void
+    public function postLoad(LifecycleEventArgs $eventArguments): void
     {
         $this->reverseTransform($eventArguments, $eventArguments->getObject());
     }

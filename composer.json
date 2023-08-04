@@ -63,8 +63,7 @@
     },
     "extra": {
         "branch-alias": {
-           "dev-feature/gedmo-dev": "0.1-dev",
-           "dev-feature/transform-context-field": "0.1-dev"
+           "dev-production/cafevdb/nextcloud25": "0.1.x-dev"
         }
     }
 }
