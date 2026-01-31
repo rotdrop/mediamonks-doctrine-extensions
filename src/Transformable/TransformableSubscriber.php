@@ -10,13 +10,13 @@ use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\PropertyAccessors\PropertyAccessor;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\Persistence\ObjectManager;
 use Exception;
 use Gedmo\Mapping\MappedEventSubscriber;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerInterface;
 use MediaMonks\Doctrine\Transformable\Transformer\TransformerPool;
-use ReflectionProperty;
 
 /**
  * @author Robert Slootjes <robert@mediamonks.com>
@@ -146,11 +146,11 @@ class TransformableSubscriber extends MappedEventSubscriber
 
         $context = $this->getFieldContext($entity, $column, $meta);
 
-        $reflectionProperty = $meta->getReflectionProperty($field);
-        $originalValue = $this->getEntityValue($reflectionProperty, $entity);
+        $propertyAccessor = $meta->getPropertyAccessor($field);
+        $originalValue = $this->getEntityValue($propertyAccessor, $entity);
 
         $newValue = $this->getNewValue($oid, $field, $transformer, $method, $originalValue, $context);
-        $reflectionProperty->setValue($entity, $newValue);
+        $propertyAccessor->setValue($entity, $newValue);
 
         $this->setFieldContext($context, $entity, $column, $meta);
 
@@ -215,9 +215,9 @@ class TransformableSubscriber extends MappedEventSubscriber
         $contextProperty->setValue($entity, $context);
     }
 
-    protected function getEntityValue(ReflectionProperty $reflectionProperty, object $entity): string|null
+    protected function getEntityValue(PropertyAccessor $propertyAccessor, object $entity): string|null
     {
-        $value = $reflectionProperty->getValue($entity);
+        $value = $propertyAccessor->getValue($entity);
 
         if (is_resource($value)) {
             $value = stream_get_contents($value);
