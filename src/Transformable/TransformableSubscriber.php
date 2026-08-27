@@ -187,7 +187,9 @@ class TransformableSubscriber extends MappedEventSubscriber
         if (!$contextProperty) {
             throw new \RuntimeException("There is no context-propery [{$column['context']}] to hold the transformation context of the propery [{$column['field']}] on object [{$meta->name}]");
         }
-        $contextProperty->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $contextProperty->setAccessible(true);
+        }
         $context = $contextProperty->getValue($entity);
         return $arrayContext ? $context[$column['field']]??null : $context;
     }
@@ -206,7 +208,9 @@ class TransformableSubscriber extends MappedEventSubscriber
         if (!$contextProperty) {
             throw new \RuntimeException("There is no context-propery [{$column['context']}] to hold the transformation context of the propery [{$column['field']}] on object [{$meta->name}]");
         }
-        $contextProperty->setAccessible(true);
+        if (PHP_VERSION_ID < 80100) {
+            $contextProperty->setAccessible(true);
+        }
         if ($arrayContext) {
           $contextArray = $contextProperty->getValue($entity)??[];
           $contextArray[$column['field']] = $context;
