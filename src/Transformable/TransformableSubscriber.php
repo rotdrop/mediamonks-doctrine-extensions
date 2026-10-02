@@ -166,6 +166,12 @@ class TransformableSubscriber extends MappedEventSubscriber
             } else {
                 $changeSet[$field][1] = $newValue;
             }
+        } elseif ($method === TransformerMethod::TRANSFORM) {
+            // also update the field if the stored transformed value does not match the actual transformed value.
+            $originalTransformedValue = $this->getEntityFieldValue($oid, $field, TransformableState::TRANSFORMED);
+            if ($originalTransformedValue !== $newValue) {
+                $changeSet[$field] = [$originalTransformedValue, $newValue];
+            }
         }
 
         if ($method === TransformerMethod::REVERSE_TRANSFORM) {
