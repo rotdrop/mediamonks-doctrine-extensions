@@ -49,6 +49,10 @@ abstract class BaseTestCaseORM extends TestCase
      */
     protected function getDefaultMockSqliteEntityManager(EventManager $evm = null, bool $annotations = false): EntityManager
     {
+        if ($annotations && !class_exists(AnnotationDriver::class)) {
+            $this->markTestSkipped('Doctrine ORM no longer supports annotation mapping.');
+        }
+
         try {
             $conn = DriverManager::getConnection([
                 'driver' => 'pdo_sqlite',
@@ -97,6 +101,9 @@ abstract class BaseTestCaseORM extends TestCase
         $config->setProxyDir(TESTS_TEMP_DIR);
         $config->setProxyNamespace('Proxy');
         $config->setMetadataDriverImpl($this->getMetadataDriverImplementation($annotations));
+        if (PHP_VERSION_ID >= 80400 && method_exists($config, 'enableNativeLazyObjects')) {
+            $config->enableNativeLazyObjects(true);
+        }
 
         // TODO: Remove the "if" check when dropping support of doctrine/dbal 2.
         if (class_exists(Middleware::class)) {

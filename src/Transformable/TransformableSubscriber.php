@@ -154,17 +154,31 @@ class TransformableSubscriber extends MappedEventSubscriber
 
         $this->setFieldContext($context, $entity, $column, $meta);
 
-        // replace the uow original data with the reverse transformed, to avoid detecting useless changes.
+        $changeSet = &$unitOfWork->getEntityChangeSet($entity);
+        if ($method === TransformerMethod::TRANSFORM && empty($changeSet)) {
+            $originalTransformedValue = $this->getEntityFieldValue($oid, $field, TransformableState::TRANSFORMED);
+            if ($originalTransformedValue !== $newValue) {
+                // A missing change set is returned by reference to a temporary array.
+                $unitOfWork->setOriginalEntityProperty($oid, $field, $originalTransformedValue);
+                $unitOfWork->recomputeSingleEntityChangeSet($meta, $entity);
+                $changeSet = &$unitOfWork->getEntityChangeSet($entity);
+            }
+        }
+
+        // Keep the entity snapshot in sync with the current representation.
         $unitOfWork->setOriginalEntityProperty($oid, $field, $newValue);
 
-        // correct uow change set
-        $changeSet = &$unitOfWork->getEntityChangeSet($entity);
         if (isset($changeSet[$field])) {
             if ($newValue === $changeSet[$field][0] && $newValue !== null) {
                 unset($changeSet[$field]);
-                if (empty($changeSet)) $unitOfWork->clearEntityChangeSet($oid);
             } else {
                 $changeSet[$field][1] = $newValue;
+            }
+        } elseif ($method === TransformerMethod::TRANSFORM) {
+            // also update the field if the stored transformed value does not match the actual transformed value.
+            $originalTransformedValue = $this->getEntityFieldValue($oid, $field, TransformableState::TRANSFORMED);
+            if ($originalTransformedValue !== $newValue) {
+                $changeSet[$field] = [$originalTransformedValue, $newValue];
             }
         }
 
