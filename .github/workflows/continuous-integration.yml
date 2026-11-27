@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - master
+      - feature/transform-context-field
 
 env:
   COMPOSER_ROOT_VERSION: "1.99.99"
@@ -27,9 +28,6 @@ jobs:
           mkdir -p build/logs
           php -r 'if (!extension_loaded("sodium")) { fwrite(STDERR, "The sodium extension is required in CI.\n"); exit(1); }'
       - uses: "ramsey/composer-install@v2"
-        with:
-          # Laminas Crypt is abandoned and caps its PHP requirement at 8.3.
-          composer-options: "--ignore-platform-req=php+"
       - name: "Run unit tests"
         run: "./vendor/bin/phpunit --colors=always --coverage-clover build/logs/clover.xml --coverage-text"
       - name: "Publish coverage report to Codecov"
@@ -56,8 +54,5 @@ jobs:
           mkdir -p build/logs
           php -r 'if (!extension_loaded("sodium")) { fwrite(STDERR, "The sodium extension is required in CI.\n"); exit(1); }'
       - uses: "ramsey/composer-install@v2"
-        with:
-          # Only PHP 8.5 needs to bypass Laminas Crypt's outdated upper bound.
-          composer-options: "${{ matrix.php-version == '8.5' && '--ignore-platform-req=php+' || '' }}"
       - name: "Run unit tests"
         run: "./vendor/bin/phpunit --colors=always"

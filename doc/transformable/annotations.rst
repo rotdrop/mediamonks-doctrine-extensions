@@ -1,6 +1,9 @@
 Annotations
 ===========
 
+Legacy reference only: Doctrine ORM 3 no longer supports annotation mapping.
+Use the attribute example in ``attributes.rst`` for the supported ORM integration.
+
 .. code-block:: php
 
     <?php
@@ -8,7 +11,7 @@ Annotations
     namespace Acme\Entity;
 
     use Doctrine\ORM\Mapping as ORM;
-    use MediaMonks\Doctrine\Mapping\Annotation as MediaMonks;
+    use MediaMonks\Doctrine\Mapping as MediaMonks;
 
     /**
      * @ORM\Entity

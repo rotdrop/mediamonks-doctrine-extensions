@@ -2,7 +2,6 @@
 
 namespace MediaMonks\Doctrine\Transformable\Transformer;
 
-use ParagonIE\Halite\Halite;
 use ParagonIE\Halite\KeyFactory;
 use ParagonIE\Halite\Symmetric\Crypto;
 use ParagonIE\Halite\Symmetric\EncryptionKey;
@@ -10,8 +9,6 @@ use ParagonIE\HiddenString\HiddenString;
 
 class HaliteSymmetricTransformer extends AbstractTransformer
 {
-    const HALITE_LEGACY_VERSION = '1.0.0';
-
     private bool $binary = true;
 
     private EncryptionKey $encryptionKey;
@@ -57,11 +54,7 @@ class HaliteSymmetricTransformer extends AbstractTransformer
             $value = sodium_bin2hex($value);
         }
 
-        if (Halite::VERSION > self::HALITE_LEGACY_VERSION) {
-            $value = new HiddenString($value);
-        }
-
-        return Crypto::encrypt($value, $this->encryptionKey);
+        return Crypto::encrypt(new HiddenString($value), $this->encryptionKey);
     }
 
     /**
@@ -78,11 +71,7 @@ class HaliteSymmetricTransformer extends AbstractTransformer
             return null;
         }
 
-        $decryptedValue = Crypto::decrypt($value, $this->encryptionKey);
-
-        if (Halite::VERSION > self::HALITE_LEGACY_VERSION) {
-            $decryptedValue = $decryptedValue->getString();
-        }
+        $decryptedValue = Crypto::decrypt($value, $this->encryptionKey)->getString();
 
         if (!$this->binary) {
             return $decryptedValue;

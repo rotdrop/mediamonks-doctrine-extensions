@@ -38,7 +38,6 @@
     },
     "require-dev": {
         "defuse/php-encryption": "^2.0",
-        "laminas/laminas-crypt": "^3.10",
         "phpunit/phpunit": "^9.5",
         "paragonie/halite": "^v5.0",
         "mockery/mockery": "^1.4",
@@ -48,8 +47,7 @@
     "suggest": {
         "doctrine/orm": "^3.8 to use the extensions with the ORM",
         "defuse/php-encryption": "to use the Defuse Crypto transformers",
-        "laminas/laminas-crypt": "to use the Zend Crypt transformers",
-        "paragonie/halite": "to use the Libsodium Crypto transformers"
+        "paragonie/halite": "to use the Halite symmetric transformer (requires ext-sodium)"
     },
     "autoload": {
         "psr-4": {
