@@ -6,35 +6,19 @@ namespace Mediamonks\Doctrine\Tests\Transformable\Fixture;
 use Doctrine\ORM\Mapping as ORM;
 use MediaMonks\Doctrine\Mapping as MediaMonks;
 
-/**
- * @ORM\Entity
- * @ORM\Table(name="tests")
- */
 #[ORM\Entity]
 #[ORM\Table(name: 'tests')]
 class Test
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     private int $id;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     * @MediaMonks\Transformable(name="mocked")
-     */
     #[ORM\Column(type: 'text', nullable: true)]
     #[MediaMonks\Transformable(name: 'mocked')]
     private ?string $value = null;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
     #[ORM\Column(type: 'boolean')]
     private bool $updated = false;
 

@@ -11,7 +11,7 @@
 These extensions add more functionality to Doctrine2.
 
 > Breaking changes!  
-  All Zend transformers are now renamed to Laminas.  
+  The abandoned Laminas Crypt transformers have been removed. Use the PHP hash/HMAC, Defuse, or Halite transformers instead.
   YAML support has been removed
 
 > New features!  
@@ -34,9 +34,6 @@ Currently, these adapters are provided in order of recommendation:
 - DefuseCryptoEncryptKeyTransformer - Encrypt/decrypts the value
 - PhpHashTransformer - Hashes the value
 - PhpHmacTransformer - Hashes the value with a key
-- LaminasCryptHashTransformer - Hashes the value
-- LaminasCryptHmacTransformer - Hashes the value with a key
-- LaminasCryptSymmetricTransformer - Encrypts/decrypts the value using openssl (Mcrypt is deprecated), with aes as default algorithm
 
 You can easily create your own transformers by implementing the [TransformableInterface](src/Transformable/Transformer/TransformerInterface.php)
 
