@@ -54,7 +54,7 @@ class HaliteSymmetricTransformer extends AbstractTransformer
         }
 
         if ($this->binary) {
-            $value = \Sodium\bin2hex($value);
+            $value = sodium_bin2hex($value);
         }
 
         if (Halite::VERSION > self::HALITE_LEGACY_VERSION) {
@@ -88,6 +88,6 @@ class HaliteSymmetricTransformer extends AbstractTransformer
             return $decryptedValue;
         }
 
-        return \Sodium\hex2bin($decryptedValue);
+        return sodium_hex2bin($decryptedValue);
     }
 }

@@ -17,13 +17,19 @@ jobs:
       - uses: "actions/checkout@v3"
       - uses: "shivammathur/setup-php@v2"
         with:
-          php-version: "latest"
+          php-version: "8.5"
+          extensions: "sodium"
           coverage: "pcov"
           ini-values: "memory_limit=-1, zend.assertions=1, error_reporting=-1, display_errors=On"
           tools: "composer"
       - name: "Prepare for tests"
-        run: "mkdir -p build/logs"
+        run: |
+          mkdir -p build/logs
+          php -r 'if (!extension_loaded("sodium")) { fwrite(STDERR, "The sodium extension is required in CI.\n"); exit(1); }'
       - uses: "ramsey/composer-install@v2"
+        with:
+          # Laminas Crypt is abandoned and caps its PHP requirement at 8.3.
+          composer-options: "--ignore-platform-req=php+"
       - name: "Run unit tests"
         run: "./vendor/bin/phpunit --colors=always --coverage-clover build/logs/clover.xml --coverage-text"
       - name: "Publish coverage report to Codecov"
@@ -35,17 +41,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: [ "8.1", "8.2" ]
+        php-version: [ "8.1", "8.2", "8.5" ]
     steps:
       - uses: "actions/checkout@v3"
       - uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php-version }}"
+          extensions: "sodium"
           coverage: "none"
           ini-values: "memory_limit=-1, zend.assertions=1, error_reporting=-1, display_errors=On"
           tools: "composer"
       - name: "Prepare for tests"
-        run: "mkdir -p build/logs"
+        run: |
+          mkdir -p build/logs
+          php -r 'if (!extension_loaded("sodium")) { fwrite(STDERR, "The sodium extension is required in CI.\n"); exit(1); }'
       - uses: "ramsey/composer-install@v2"
+        with:
+          # Only PHP 8.5 needs to bypass Laminas Crypt's outdated upper bound.
+          composer-options: "${{ matrix.php-version == '8.5' && '--ignore-platform-req=php+' || '' }}"
       - name: "Run unit tests"
         run: "./vendor/bin/phpunit --colors=always"

@@ -80,4 +80,11 @@ class HaliteSymmetricTransformerTest extends TestCase
         }
         $this->assertEquals(self::VALUE_TO_ENCRYPT, $y);
     }
+
+    public function testTransformBinaryData(): void
+    {
+        $transformer = $this->getTransformerBinary();
+        $value = "\x00\x80\xff";
+        $this->assertSame($value, $transformer->reverseTransform($transformer->transform($value)));
+    }
 }

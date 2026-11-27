@@ -46,6 +46,7 @@ You need:
 
 - **PHP >= 8.1**
 - **Doctrine ORM 3.8** when using the ORM integration
+- **PHP sodium extension** when using the Halite transformer
 
 To use the library.
 
