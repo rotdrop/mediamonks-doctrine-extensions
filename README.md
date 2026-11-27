@@ -21,7 +21,12 @@ These extensions add more functionality to Doctrine2.
 
 This extension uses transform and reverseTransform methods to convert data to and from the database. This can for example be used to encrypt a field when it's sent to the database and it will be decrypted when it is retrieved from the database.
 
-The field's value will only be transformed when the value changed which also makes it possible to implement only a transform function for one way transformations like hashing.
+On a scheduled insert or update, a cacheable transformer reuses the stored value
+when the plaintext has not changed. A transformer whose `isCachable()` returns
+false is called again on scheduled updates, allowing it to re-encrypt unchanged
+plaintext after a key change. To force such an update, schedule the managed
+entity with Doctrine's unit of work before flushing; changing a key alone does
+not schedule an entity for update.
 
 Currently, these adapters are provided in order of recommendation:
 
@@ -40,6 +45,7 @@ You can easily create your own transformers by implementing the [TransformableIn
 You need:
 
 - **PHP >= 8.1**
+- **Doctrine ORM 3.8** when using the ORM integration
 
 To use the library.
 

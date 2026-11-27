@@ -43,6 +43,7 @@ class TransformableTest extends BaseTestCaseORM
     protected function getDefaultTransformer(): TransformerInterface
     {
         $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer', TransformerInterface::class);
+        $transformer->shouldReceive('isCachable')->andReturn(true);
         $transformer->shouldReceive('transform')->andReturn(self::VALUE_TRANSFORMED);
         $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE);
 
@@ -133,6 +134,7 @@ class TransformableTest extends BaseTestCaseORM
     public function testTransformAfterUpdate(): void
     {
         $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer', TransformerInterface::class);
+        $transformer->shouldReceive('isCachable')->andReturn(true);
         $transformer->shouldReceive('transform')->andReturn(self::VALUE_TRANSFORMED, self::VALUE_2_TRANSFORMED);
         $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE, self::VALUE_2);
 
@@ -154,6 +156,7 @@ class TransformableTest extends BaseTestCaseORM
     public function testAnnotationTransformAfterUpdate(): void
     {
         $transformer = m::mock('MediaMonks\Doctrine\Transformable\Transformer\NoopTransformer', TransformerInterface::class);
+        $transformer->shouldReceive('isCachable')->andReturn(true);
         $transformer->shouldReceive('transform')->andReturn(self::VALUE_TRANSFORMED, self::VALUE_2_TRANSFORMED);
         $transformer->shouldReceive('reverseTransform')->andReturn(self::VALUE, self::VALUE_2);
 

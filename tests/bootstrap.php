@@ -12,6 +12,8 @@ $loader = require __DIR__ . '/../vendor/autoload.php';
 $loader->add('Tool', __DIR__ . '/../vendor/gedmo/doctrine-extensions/tests/Gedmo/Tool');
 $loader->add('Transformable\\Fixture', __DIR__ . '/src');
 
-$reader = new AnnotationReader();
-$reader = new PsrCachedReader($reader, new ArrayAdapterAlias());
-$_ENV['annotation_reader'] = $reader;
+if (class_exists(AnnotationReader::class)) {
+    $reader = new AnnotationReader();
+    $reader = new PsrCachedReader($reader, new ArrayAdapterAlias());
+    $_ENV['annotation_reader'] = $reader;
+}
