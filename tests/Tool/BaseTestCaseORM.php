@@ -11,13 +11,11 @@ declare(strict_types=1);
 
 namespace MediaMonks\Doctrine\Tests\Tool;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\Middleware;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
@@ -44,21 +42,17 @@ abstract class BaseTestCaseORM extends TestCase
 
     /**
      * EntityManager mock object together with
-     * annotation mapping driver and pdo_sqlite
+     * attribute mapping driver and pdo_sqlite
      * database in memory
      */
-    protected function getDefaultMockSqliteEntityManager(EventManager $evm = null, bool $annotations = false): EntityManager
+    protected function getDefaultMockSqliteEntityManager(?EventManager $evm = null): EntityManager
     {
-        if ($annotations && !class_exists(AnnotationDriver::class)) {
-            $this->markTestSkipped('Doctrine ORM no longer supports annotation mapping.');
-        }
-
         try {
             $conn = DriverManager::getConnection([
                 'driver' => 'pdo_sqlite',
                 'memory' => true,
             ]);
-            $config = !$annotations ? $this->getDefaultConfiguration() : $this->getDefaultConfiguration($annotations);
+            $config = $this->getDefaultConfiguration();
             $em = new EntityManager($conn, $config, $evm ?: $this->getEventManager());
             $schema = array_map(static function ($class) use ($em) {
                 return $em->getClassMetadata($class);
@@ -79,13 +73,9 @@ abstract class BaseTestCaseORM extends TestCase
     /**
      * Creates default mapping driver
      */
-    protected function getMetadataDriverImplementation(bool $annotations): MappingDriver
+    protected function getMetadataDriverImplementation(): MappingDriver
     {
-        if (!$annotations) {
-            return new AttributeDriver([]);
-        }
-
-        return new AnnotationDriver(new AnnotationReader());
+        return new AttributeDriver([]);
     }
 
     /**
@@ -95,12 +85,12 @@ abstract class BaseTestCaseORM extends TestCase
      */
     abstract protected function getUsedEntityFixtures(): array;
 
-    protected function getDefaultConfiguration(bool $annotations = false): Configuration
+    protected function getDefaultConfiguration(): Configuration
     {
         $config = new Configuration();
         $config->setProxyDir(TESTS_TEMP_DIR);
         $config->setProxyNamespace('Proxy');
-        $config->setMetadataDriverImpl($this->getMetadataDriverImplementation($annotations));
+        $config->setMetadataDriverImpl($this->getMetadataDriverImplementation());
         if (PHP_VERSION_ID >= 80400 && method_exists($config, 'enableNativeLazyObjects')) {
             $config->enableNativeLazyObjects(true);
         }
